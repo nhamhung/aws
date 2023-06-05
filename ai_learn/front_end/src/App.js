@@ -24,7 +24,7 @@ const App = () => {
         if (words.length === 1) {
           const selectedWord = words[0];
 
-          const response = await axios.post('http://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/translate-text', { text: selectedWord })
+          const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/translate-text', { text: selectedWord })
           setSelectedWord(response.data.text);
           setPopupVisible(true);
           console.log(`Selected word: ${selectedWord}`);
@@ -44,7 +44,7 @@ const App = () => {
       const formData = new FormData();
       formData.append('image', selectedImage);
 
-      const response = await axios.post('http://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/extract-text', formData);
+      const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/extract-text', formData);
       setExtractedText(response.data.text);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -53,7 +53,7 @@ const App = () => {
 
   const handleTextToSpeech = async () => {
     try {
-      const response = await axios.post('http://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/synthesize-speech', { text: speechText, voiceId: 'Joanna' }, { responseType: 'arraybuffer' });
+      const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/synthesize-speech', { text: speechText, voiceId: 'Joanna' }, { responseType: 'arraybuffer' });
       setAudioUrl(URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' })));
       setAudioKey((prevKey) => prevKey + 1); // Increment the key value
     } catch (error) {
@@ -67,7 +67,7 @@ const App = () => {
 
   const handleTextTranslate = async () => {
     try {
-      const response = await axios.post('http://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/translate-text', { text: sourceText });
+      const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/translate-text', { text: sourceText });
       setTargetText(response.data.text);
     } catch (err) {
       console.error('Error translating text:', err);
