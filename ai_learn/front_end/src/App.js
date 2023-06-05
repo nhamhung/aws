@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Menu from './Menu';
 import Game from './Game';
@@ -12,6 +12,32 @@ const App = () => {
   const [audioKey, setAudioKey] = useState(0);
   const [sourceText, setSourceText] = useState('');
   const [targetText, setTargetText] = useState('');
+  const [selectedWord, setSelectedWord] = useState('');
+  const [popupVisible, setPopupVisible] = useState(false);
+
+  useEffect(() => {
+    const handleWordSelect = async () => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim().length > 0) {
+        const selectedText = selection.toString().trim();
+        const words = selectedText.split(/\s+/); // Split selected text into words
+        if (words.length === 1) {
+          const selectedWord = words[0];
+
+          const response = await axios.post('http://localhost:3000/translate-text', { text: selectedWord })
+          setSelectedWord(response.data.text);
+          setPopupVisible(true);
+          console.log(`Selected word: ${selectedWord}`);
+          // Call translation functionality here or perform any other action with the selected word
+        } else {
+          setPopupVisible(false);
+        }
+      }
+    };
+
+    const textContainer = document.getElementById('text-container');
+    textContainer.addEventListener('mouseup', handleWordSelect);
+  }, [selectedWord])
 
   const handleImageUpload = async () => {
     try {
@@ -57,7 +83,12 @@ const App = () => {
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleImageUpload}>
           Extract Text
         </button>
-        <div>{extractedText}</div>
+        <div id="text-container">{extractedText}</div>
+        {popupVisible && (
+          <div className="bg-white border border-gray-300 p-4 mt-4 rounded shadow">
+            <p className="text-gray-800">{selectedWord}</p>
+          </div>
+        )}
 
         <h2 className="text-2xl font-bold mt-10">Text to Speech</h2>
         <textarea className="w-full h-40 mb-4 mt-4 p-2 border border-gray-300" value={speechText} onChange={(e) => setSpeechText(e.target.value)}></textarea>
