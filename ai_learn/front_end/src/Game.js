@@ -12,7 +12,8 @@ const Game = () => {
 
   const fetchFlashcards = async () => {
     try {
-      const response = await axios.get('Backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/flashcards');
+      const response = await axios.get('http://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/flashcards');
+      console.log(response);
       setFlashcards(response.data);
     } catch (error) {
       console.error('Error fetching flashcards:', error);

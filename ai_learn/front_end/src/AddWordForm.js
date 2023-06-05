@@ -10,7 +10,7 @@ const AddWordForm = () => {
     e.preventDefault();
 
     try {
-      await axios.post('Backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/words', { word, definition, translation });
+      await axios.post('http://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/words', { word, definition, translation });
       console.log('Word added successfully.');
       // Add any desired success handling, such as displaying a success message
     } catch (error) {
