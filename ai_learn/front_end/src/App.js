@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Menu from './Menu';
 import Game from './Game';
@@ -14,6 +14,7 @@ const App = () => {
   const [targetText, setTargetText] = useState('');
   const [selectedWord, setSelectedWord] = useState('');
   const [popupVisible, setPopupVisible] = useState(false);
+  const [wordAdded, setWordAdded] = useState(false);
 
   useEffect(() => {
     const handleWordSelect = async () => {
@@ -24,7 +25,7 @@ const App = () => {
         if (words.length === 1) {
           const selectedWord = words[0];
 
-          const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/translate-text', { text: selectedWord })
+          const response = await axios.post('http://localhost:3000/api/translate-text', { text: selectedWord })
           setSelectedWord(response.data.text);
           setPopupVisible(true);
           console.log(`Selected word: ${selectedWord}`);
@@ -39,12 +40,17 @@ const App = () => {
     textContainer.addEventListener('mouseup', handleWordSelect);
   }, [selectedWord])
 
+  useEffect(() => {
+    const audioElement = document.getElementById('audio-element');
+    audioElement.load();
+  }, [audioUrl]);
+
   const handleImageUpload = async () => {
     try {
       const formData = new FormData();
       formData.append('image', selectedImage);
 
-      const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/extract-text', formData);
+      const response = await axios.post('http://localhost:3000/api/extract-text', formData);
       setExtractedText(response.data.text);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -53,8 +59,9 @@ const App = () => {
 
   const handleTextToSpeech = async () => {
     try {
-      const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/synthesize-speech', { text: speechText, voiceId: 'Joanna' }, { responseType: 'arraybuffer' });
+      const response = await axios.post('http://localhost:3000/api/synthesize-speech', { text: speechText, voiceId: 'Joanna' }, { responseType: 'arraybuffer' });
       setAudioUrl(URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' })));
+      console.log(audioUrl);
       setAudioKey((prevKey) => prevKey + 1); // Increment the key value
     } catch (error) {
       console.error('Error synthesizing speech:', error);
@@ -67,7 +74,7 @@ const App = () => {
 
   const handleTextTranslate = async () => {
     try {
-      const response = await axios.post('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/translate-text', { text: sourceText });
+      const response = await axios.post('http://localhost:3000/api/translate-text', { text: sourceText });
       setTargetText(response.data.text);
     } catch (err) {
       console.error('Error translating text:', err);
@@ -95,12 +102,9 @@ const App = () => {
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleTextToSpeech}>
           Synthesize Speech
         </button>
-        {audioUrl && (
-          <audio controls className="mt-4">
-            <source key={audioKey} src={audioUrl} type="audio/mpeg" />
-          </audio>
-        )}
-
+        <audio id="audio-element" controls className="mt-4">
+          <source key={audioKey} src={audioUrl} type="audio/mpeg" />
+        </audio>
         <h2 className="text-2xl font-bold mt-10">Text Translation</h2>
         <textarea className="w-full h-40 mb-4 mt-4 p-2 border border-gray-300" value={sourceText} onChange={(e) => setSourceText(e.target.value)}></textarea>
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleTextTranslate}>
@@ -110,10 +114,10 @@ const App = () => {
 
         <h2 className="text-2xl font-bold mt-10">Flashcard Game</h2>
         <div className="col-span-2">
-          <Game/>
+          <Game wordAdded={wordAdded} />
         </div>
         <div className="col-span-1">
-          <AddWordForm/>
+          <AddWordForm wordAdded={wordAdded} onWordAdded={setWordAdded} />
         </div>
       </div>
     </div>

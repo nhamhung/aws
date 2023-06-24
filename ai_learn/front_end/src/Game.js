@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Flashcard from './Flashcard';
 
-const Game = () => {
+const Game = ( {wordAdded} ) => {
   const [flashcards, setFlashcards] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
+  console.log(flashcards);
+
   useEffect(() => {
     fetchFlashcards();
-  }, []);
+  }, [wordAdded]);
 
   const fetchFlashcards = async () => {
     try {
-      const response = await axios.get('https://backend-env.eba-gz7kcc7n.ap-southeast-1.elasticbeanstalk.com:80/flashcards');
+      const response = await axios.get('http://localhost:3000/api/flashcards');
       setFlashcards(response.data);
     } catch (error) {
       console.error('Error fetching flashcards:', error);
@@ -20,15 +22,19 @@ const Game = () => {
   };
 
   const handleNextCard = () => {
-    setCurrentCardIndex((prevIndex) => prevIndex + 1);
+    if (currentCardIndex < flashcards.length - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+    }
   };
+
+  const handlePrevCard = () => {
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(currentCardIndex - 1);
+    }
+  }
 
   if (flashcards.length === 0) {
     return <p>Loading flashcards...</p>;
-  }
-
-  if (currentCardIndex >= flashcards.length) {
-    return <p>End of game</p>;
   }
 
   const currentCard = flashcards[currentCardIndex];
@@ -39,6 +45,7 @@ const Game = () => {
       definition={currentCard.definition}
       translation={currentCard.translation}
       onNextCard={handleNextCard}
+      onPrevCard={handlePrevCard}
     />
   );
 };

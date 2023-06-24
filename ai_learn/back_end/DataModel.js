@@ -1,13 +1,15 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
+console.log(process.env.DB_PASSWORD);
+
 // Connect to PostgreSQL database
-const sequelize = new Sequelize('postgres', 'postgres', '(Nhyeuhh2204)', {
-  host: 'ai-learn.cisphulva4x6.ap-southeast-1.rds.amazonaws.com',
+const sequelize = new Sequelize('postgres', 'nhamhhung', process.env.DB_PASSWORD, {
+  host: 'localhost',
   dialect: 'postgres',
 });
 
 // Define database models
-const Word = sequelize.define('Word', {
+const Word = sequelize.define('word', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,

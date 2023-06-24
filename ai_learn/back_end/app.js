@@ -17,7 +17,7 @@ const polly = new AWS.Polly();
 const translate = new AWS.Translate();
 
 // Handle image upload and text extraction
-app.post('/extract-text', upload.single('image'), (req, res) => {  
+app.post('/api/extract-text', upload.single('image'), (req, res) => {  
   const imageBuffer = req.file.buffer;
 
   const params = {
@@ -43,7 +43,7 @@ app.post('/extract-text', upload.single('image'), (req, res) => {
 
 
 // Text-to-speech route
-app.post('/synthesize-speech', async (req, res) => {
+app.post('/api/synthesize-speech', async (req, res) => {
     try {
       const { text, voiceId } = req.body;
       
@@ -74,7 +74,7 @@ app.post('/synthesize-speech', async (req, res) => {
 
 // Text translation
 
-app.post('/translate-text', async (req, res) => {
+app.post('/api/translate-text', async (req, res) => {
   try {
     const { text } = req.body;
 
@@ -96,13 +96,13 @@ app.post('/translate-text', async (req, res) => {
   }
 });
 
-app.get('/flashcards', async (req, res) => {
+app.get('/api/flashcards', async (req, res) => {
   const words = await Word.findAll();
 
   res.json(words);
 });
 
-app.post('/words', async (req, res) => {
+app.post('/api/words', async (req, res) => {
   try {
     const { word, definition, translation } = req.body;
 

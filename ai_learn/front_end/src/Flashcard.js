@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Flashcard = ({ word, definition, translation, onNextCard }) => {
+const Flashcard = ({ word, definition, translation, onNextCard, onPrevCard }) => {
   const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState(null);
 
@@ -20,6 +20,12 @@ const Flashcard = ({ word, definition, translation, onNextCard }) => {
     setUserAnswer('');
     setIsCorrect(null);
     onNextCard();
+  };
+
+  const handlePrevCard = () => {
+    setUserAnswer('');
+    setIsCorrect(null);
+    onPrevCard();
   };
 
   return (
@@ -51,9 +57,15 @@ const Flashcard = ({ word, definition, translation, onNextCard }) => {
           <div>
             <button
               onClick={handleNextCard}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-600"
+              className="bg-blue-500 text-white mr-4 px-4 py-2 rounded-md mt-4 hover:bg-blue-600"
               >
               Next Card
+            </button>
+            <button
+              onClick={handlePrevCard}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-600"
+              >
+              Prev Card
             </button>
           </div>
         </div>
